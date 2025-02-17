@@ -15,16 +15,18 @@ datasource db {
     directUrl = env("DIRECT_URL")
 }
 
-model Post {
+model Article {
     id        Int      @id @default(autoincrement())
-    name      String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
 
-    @@index([name])
+    title String
+    content Json @db.Json
+
+    @@index([title])
 }
 
 // Necessary for Next auth
@@ -63,7 +65,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+    posts         Article[]
 }
 
 model VerificationToken {
@@ -73,3 +75,4 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
