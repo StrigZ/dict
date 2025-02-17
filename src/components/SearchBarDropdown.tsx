@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useRef } from 'react';
 import { useOnClickOutside } from 'usehooks-ts';
 
+import { ScrollArea } from './ui/scroll-area';
+
 const mockResults: Partial<Article>[] = [
   {
     id: 1,
@@ -57,24 +59,26 @@ export default function SearchBarDropdown({ onClickOutside }: Props) {
       }}
       initial={{ opacity: 0 }}
       exit={{ opacity: 0 }}
-      className="scrollbar-thin absolute inset-x-0 -bottom-2 h-72 w-full translate-y-full overflow-y-scroll rounded-xl border bg-card text-card-foreground shadow"
+      className="absolute inset-x-0 -bottom-2 z-50 h-72 w-full translate-y-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow"
       ref={popoverRef}
     >
-      <ul className="flex flex-col">
-        {mockResults.map(({ title, content, id }) => (
-          <li key={id}>
-            <Link
-              href={'/articles/' + id}
-              className="flex flex-col border-b border-border px-4 py-2 peer-last:border-b-0"
-            >
-              <p className="font-semibold">{title}</p>
-              <p className="truncate text-muted-foreground">
-                {JSON.stringify(content)}
-              </p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <ScrollArea className="h-full">
+        <div className="flex flex-col">
+          {mockResults.map(({ title, content, id }) => (
+            <div key={id}>
+              <Link
+                href={'/articles/' + id}
+                className="flex flex-col border-b border-border px-4 py-2 peer-last:border-b-0"
+              >
+                <p className="font-semibold">{title}</p>
+                <p className="truncate text-muted-foreground">
+                  {JSON.stringify(content)}
+                </p>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
     </motion.div>
   );
 }
