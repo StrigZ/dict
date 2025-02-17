@@ -15,9 +15,9 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="h-screen overflow-hidden">
+      <main className="container mx-auto flex h-screen flex-col overflow-hidden">
         <Header />
-        <div className="grid grid-cols-[400px,1fr]">
+        <div className="flex flex-1 overflow-hidden">
           <Sidebar />
           <Article />
         </div>
