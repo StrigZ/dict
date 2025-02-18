@@ -2,7 +2,7 @@
 
 TODO:
 
-- [ ] Create Article component
-- [ ] Create article route
+- [x] Create Article component
+- [x] Create article route
 - [ ] Implement text editor
 - [ ] Make UI responsive

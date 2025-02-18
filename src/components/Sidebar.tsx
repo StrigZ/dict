@@ -73,7 +73,7 @@ export default function Sidebar({}: Props) {
             <>
               <Link
                 key={word}
-                href="#"
+                href={'/articles/' + word}
                 className={cn('w-full', buttonVariants({ variant: 'ghost' }))}
               >
                 {word}
