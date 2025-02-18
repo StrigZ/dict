@@ -4,6 +4,7 @@ import { type Metadata } from 'next';
 import Layout from '~/components/Layout';
 import Providers from '~/providers/providers';
 import '~/styles/globals.css';
+import '~/styles/prosemirror.css';
 import { TRPCReactProvider } from '~/trpc/react';
 
 export const metadata: Metadata = {

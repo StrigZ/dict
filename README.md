@@ -4,5 +4,5 @@ TODO:
 
 - [x] Create Article component
 - [x] Create article route
-- [ ] Implement text editor
+- [x] Implement text editor
 - [ ] Make UI responsive
