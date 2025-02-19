@@ -14,7 +14,9 @@ import {
   handleCommandNavigation,
 } from 'novel';
 import { useState } from 'react';
-import { useDebounceCallback, useLocalStorage } from 'usehooks-ts';
+import { useDebounceCallback } from 'usehooks-ts';
+
+import { cn } from '~/lib/utils';
 
 import { ColorSelector } from './bubble-menu/color-selector';
 import { LinkSelector } from './bubble-menu/link-selector';
@@ -26,18 +28,15 @@ import { slashCommand, suggestionItems } from './slash-commands';
 export const extensions = [...defaultExtensions, slashCommand];
 
 type Props = {
-  id: Article['id'];
-  content: Article['content'];
+  initialContent?: Article['content'];
+  onContentChange: (value: Article['content']) => void;
+  className?: string;
 };
-export default function Editor({ content: initialContent, id }: Props) {
-  const [value, setValue, removeValue] = useLocalStorage(
-    `edited_${id}`,
-    initialContent,
-  );
-
-  const [content, setContent] = useState<JSONContent | null>(
-    value as JSONContent,
-  );
+export default function Editor({
+  initialContent,
+  className,
+  onContentChange,
+}: Props) {
   const [openNode, setOpenNode] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -45,39 +44,28 @@ export default function Editor({ content: initialContent, id }: Props) {
   const debouncedUpdates = useDebounceCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
-      setContent(json);
-      setValue(json);
+      onContentChange(json);
     },
     500,
   );
 
-  const handleSaveContent = () => {
-    // update value in db
-    // ...
-
-    // remove edited json from localStorage
-    removeValue();
-
-    // redirect user or change state
-    // ...
-  };
-
   return (
     <EditorRoot>
       <EditorContent
-        initialContent={content ?? undefined}
+        initialContent={initialContent as JSONContent}
         onUpdate={({ editor }) => debouncedUpdates(editor)}
         editorProps={{
           handleDOMEvents: {
             keydown: (_view, event) => handleCommandNavigation(event),
           },
           attributes: {
-            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
+            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full border border-border rounded`,
           },
         }}
         extensions={extensions}
+        className={cn(className)}
       >
-        <EditorCommand className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
+        <EditorCommand className="z-[9999] h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
           <EditorCommandEmpty className="px-2 text-muted-foreground">
             No results
           </EditorCommandEmpty>

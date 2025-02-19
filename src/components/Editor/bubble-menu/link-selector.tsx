@@ -45,7 +45,11 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
   return (
     <Popover modal={true} open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" className="gap-2 rounded-none border-none">
+        <Button
+          variant="ghost"
+          className="gap-2 rounded-none border-none"
+          type="button"
+        >
           <p className="text-base">↗</p>
           <p
             className={cn('underline decoration-stone-400 underline-offset-4', {
