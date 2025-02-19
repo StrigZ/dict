@@ -60,9 +60,12 @@ export default function useArticleForm({
   });
 
   const updateArticle = api.article.update.useMutation({
-    onSuccess: ({ id }) => {
+    onSuccess: ({ title: newArticleTitle, id }) => {
       void utils.article.getSingle.invalidate({
         id,
+      });
+      void utils.article.getByLetter.invalidate({
+        startsWith: newArticleTitle[0]?.toUpperCase(),
       });
       onClose?.();
     },
