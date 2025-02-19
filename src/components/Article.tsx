@@ -4,8 +4,9 @@ import { generateHTML } from '@tiptap/html';
 import { SquarePen, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import type { JSONContent } from 'novel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
 import { api } from '~/trpc/react';
 
 import ArticleForm from './ArticleForm';
@@ -30,6 +31,17 @@ export default function Article({}: Props) {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const { selectActiveArticle, selectActiveLetter } = useBreadcrumbsContext();
+
+  useEffect(() => {
+    if (data?.title) {
+      const firstLetter = data?.title[0];
+      if (firstLetter) {
+        selectActiveLetter(firstLetter.toUpperCase());
+        selectActiveArticle(data);
+      }
+    }
+  }, [data, selectActiveArticle, selectActiveLetter]);
 
   if (!data) {
     return (

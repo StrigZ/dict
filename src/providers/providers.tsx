@@ -1,5 +1,7 @@
-import React from "react";
-import { ThemeProvider } from "./theme-provider";
+import React from 'react';
+
+import BreadcrumbsContextProvider from './breadcrumbs-provider';
+import { ThemeProvider } from './theme-provider';
 
 type Props = { children: React.ReactNode };
 export default function Providers({ children }: Props) {
@@ -10,7 +12,7 @@ export default function Providers({ children }: Props) {
       enableSystem
       disableTransitionOnChange
     >
-      {children}
+      <BreadcrumbsContextProvider>{children}</BreadcrumbsContextProvider>
     </ThemeProvider>
   );
 }

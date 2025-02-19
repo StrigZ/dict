@@ -7,9 +7,10 @@ TODO:
 - [x] Implement text editor
 - [x] Implement article deletion
 - [x] Implement article editing
+- [ ] Implement search
 
 Low priority:
 
 - [ ] Fix slash menu in dialog
 - [ ] Make UI responsive
-- [ ] Fix breadcrumbs
+- [x] Fix breadcrumbs
