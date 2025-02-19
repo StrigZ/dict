@@ -1,7 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { Article } from '@prisma/client';
+import { useParams, useRouter } from 'next/navigation';
 import type { JSONContent } from 'novel';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,14 +11,20 @@ import { api } from '~/trpc/react';
 
 import { useToast } from './use-toast';
 
-export default function useCreateArticleForm({
+export default function useArticleForm({
   onClose,
+  defaultValues,
 }: {
-  onClose: () => void;
+  defaultValues?: {
+    title: Article['title'];
+    content: Article['content'];
+  };
+  onClose?: () => void;
 }) {
   const { toast } = useToast();
 
   const router = useRouter();
+  const params = useParams();
   const utils = api.useUtils();
 
   const articleSchema = z.object({
@@ -33,8 +40,10 @@ export default function useCreateArticleForm({
   const form = useForm<z.infer<typeof articleSchema>>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
-      title: '',
-      content: {},
+      title: defaultValues?.title ?? '',
+      content: defaultValues
+        ? (JSON.parse(defaultValues.content as string) as JSONContent)
+        : {},
     },
   });
 
@@ -44,16 +53,22 @@ export default function useCreateArticleForm({
       void utils.article.getByLetter.invalidate({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
-      onClose();
+      onClose?.();
       form.reset();
       router.push('/articles/' + id);
     },
   });
 
-  const onCreateArticle = ({
-    content,
-    title,
-  }: z.infer<typeof articleSchema>) => {
+  const updateArticle = api.article.update.useMutation({
+    onSuccess: ({ id }) => {
+      void utils.article.getSingle.invalidate({
+        id,
+      });
+      onClose?.();
+    },
+  });
+
+  const onSubmit = ({ content, title }: z.infer<typeof articleSchema>) => {
     const strippedContent = (content as unknown as JSONContent).content?.filter(
       (item) => Object.hasOwn(item, 'content'),
     );
@@ -65,6 +80,14 @@ export default function useCreateArticleForm({
       });
     }
 
+    if (defaultValues) {
+      return updateArticle.mutate({
+        id: Number(params.slug),
+        title: title,
+        content: JSON.stringify({ ...content, content: strippedContent }),
+      });
+    }
+
     createArticle.mutate({
       title: title,
       content: JSON.stringify({ ...content, content: strippedContent }),
@@ -73,6 +96,6 @@ export default function useCreateArticleForm({
 
   return {
     form,
-    onSubmit: form.handleSubmit(onCreateArticle),
+    onSubmit: form.handleSubmit(onSubmit),
   };
 }

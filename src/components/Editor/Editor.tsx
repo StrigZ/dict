@@ -59,7 +59,10 @@ export default function Editor({
             keydown: (_view, event) => handleCommandNavigation(event),
           },
           attributes: {
-            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full border border-border rounded`,
+            class: cn(
+              `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full border border-border rounded`,
+              className,
+            ),
           },
         }}
         extensions={extensions}
@@ -94,7 +97,7 @@ export default function Editor({
           tippyOptions={{
             placement: 'top',
           }}
-          className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-muted bg-background shadow-xl"
+          className="z-[9999] flex w-fit max-w-[90vw] overflow-hidden rounded border border-muted bg-background shadow-xl"
         >
           <NodeSelector open={openNode} onOpenChange={setOpenNode} />
           <LinkSelector open={openLink} onOpenChange={setOpenLink} />

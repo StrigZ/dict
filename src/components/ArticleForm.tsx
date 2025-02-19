@@ -1,8 +1,9 @@
 'use client';
 
+import { Article } from '@prisma/client';
 import type { JSONContent } from 'novel';
 
-import useCreateArticleForm from '~/hooks/use-create-article-form';
+import useArticleForm from '~/hooks/use-article-form';
 import { cn } from '~/lib/utils';
 
 import Editor from './Editor/Editor';
@@ -18,14 +19,25 @@ import {
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 
-type Props = { className?: string; onClose: () => void };
-export default function NewArticleForm({ className, onClose }: Props) {
-  const { form, onSubmit } = useCreateArticleForm({ onClose });
+type Props = {
+  className?: string;
+  onClose?: () => void;
+  defaultValues?: {
+    title: Article['title'];
+    content: Article['content'];
+  };
+};
+export default function ArticleForm({
+  className,
+  onClose,
+  defaultValues,
+}: Props) {
+  const { form, onSubmit } = useArticleForm({ onClose, defaultValues });
 
   return (
     <Form {...form}>
       <form
-        className={cn('grid items-start gap-4 overflow-hidden', className)}
+        className={cn('grid items-start gap-4', className)}
         onSubmit={onSubmit}
       >
         <FormField
@@ -49,20 +61,30 @@ export default function NewArticleForm({ className, onClose }: Props) {
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <ScrollArea>
+                {defaultValues ? (
                   <Editor
-                    className="max-h-72"
+                    className="min-h-72"
                     initialContent={field.value as JSONContent}
                     onContentChange={field.onChange}
                   />
-                </ScrollArea>
+                ) : (
+                  <ScrollArea>
+                    <Editor
+                      className="max-h-72 min-h-36"
+                      initialContent={field.value as JSONContent}
+                      onContentChange={field.onChange}
+                    />
+                  </ScrollArea>
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit">Create</Button>
+        <Button type="submit" className={cn({ 'mr-auto': defaultValues })}>
+          {defaultValues ? 'Edit' : 'Create'}
+        </Button>
       </form>
     </Form>
   );
