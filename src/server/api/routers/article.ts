@@ -66,6 +66,20 @@ export const articleRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const article = await ctx.db.article.findUnique({
+        where: { id: input.id },
+      });
+
+      const doesExist = await ctx.db.article.findFirst({
+        where: { title: input.title, createdById: ctx.session.user.id },
+      });
+
+      if (article?.title !== input.title && doesExist) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'An article with this title already exists.',
+        });
+      }
       return ctx.db.article.update({
         where: { id: input.id },
         data: {

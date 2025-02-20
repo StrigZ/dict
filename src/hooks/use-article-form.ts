@@ -67,15 +67,25 @@ export default function useArticleForm({
 
   const updateArticle = api.article.update.useMutation({
     onSuccess: ({ title: newArticleTitle, id }) => {
+      if (newArticleTitle !== defaultValues?.title) {
+        void utils.article.getByLetter.invalidate({
+          startsWith: newArticleTitle[0]?.toUpperCase(),
+        });
+        void utils.article.getStartingLetters.invalidate();
+      }
+
       void utils.article.getSingle.invalidate({
         id,
       });
-      void utils.article.getByLetter.invalidate({
-        startsWith: newArticleTitle[0]?.toUpperCase(),
-      });
-      void utils.article.getStartingLetters.invalidate();
 
       onComplete?.();
+    },
+    onError: ({ message }) => {
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'destructive',
+      });
     },
   });
 
