@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '~/server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 
 export const articleRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -16,20 +12,24 @@ export const articleRouter = createTRPCRouter({
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.article.findUnique({
-        where: { id: input.id },
+        where: { id: input.id, createdById: ctx.session.user.id },
       });
     }),
   getByLetter: protectedProcedure
     .input(z.object({ startsWith: z.string() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.article.findMany({
-        where: { title: { startsWith: input.startsWith, mode: 'insensitive' } },
+        where: {
+          title: { startsWith: input.startsWith, mode: 'insensitive' },
+          createdById: ctx.session.user.id,
+        },
       });
     }),
   getStartingLetters: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.$queryRaw`
     SELECT DISTINCT UPPER(SUBSTRING(title, 1, 1)) AS letter
     FROM "public"."Article"
+    WHERE "createdById" = ${ctx.session.user.id}
     ORDER BY letter;
   ` as unknown as { letter: string }[];
   }),
