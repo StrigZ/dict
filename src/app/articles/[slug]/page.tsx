@@ -1,4 +1,7 @@
+import { Suspense } from 'react';
+
 import Article from '~/components/Article';
+import ArticleSkeleton from '~/components/skeletons/ArticleSkeleton';
 import { auth } from '~/server/auth';
 import { HydrateClient, api } from '~/trpc/server';
 
@@ -13,7 +16,9 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <HydrateClient>
-      <Article />
+      <Suspense fallback={<ArticleSkeleton />}>
+        <Article />
+      </Suspense>
     </HydrateClient>
   );
 }

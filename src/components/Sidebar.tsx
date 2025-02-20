@@ -7,24 +7,29 @@ import { cn } from '~/lib/utils';
 import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
 import { api } from '~/trpc/react';
 
+import SidebarSkeleton from './skeletons/SidebarSkeleton';
+import LoadingSpinner from './ui/LoadingSpinner';
 import { Button, buttonVariants } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 
-type Props = {};
-export default function Sidebar({}: Props) {
+export default function Sidebar() {
   const { activeArticle, activeLetter, selectActiveLetter } =
     useBreadcrumbsContext();
 
-  const [startingLetters] = api.article.getStartingLetters.useSuspenseQuery();
-  const { data: articles } = api.article.getByLetter.useQuery(
-    activeLetter ? { startsWith: activeLetter } : skipToken,
-  );
+  const { data: startingLetters, isLoading: isLettersQueryLoading } =
+    api.article.getStartingLetters.useQuery();
+  const { data: articles, isLoading: isArticleQueryLoading } =
+    api.article.getByLetter.useQuery(
+      activeLetter ? { startsWith: activeLetter } : skipToken,
+    );
 
-  return (
+  return isLettersQueryLoading ? (
+    <SidebarSkeleton />
+  ) : (
     <aside className="flex w-[400px] overflow-hidden border-border">
       <ScrollArea className="h-full px-4 pb-12">
         <ul className="flex h-full flex-col">
-          {startingLetters.map(({ letter }) => (
+          {startingLetters?.map(({ letter }) => (
             <li key={letter}>
               <Button
                 variant="link"
@@ -33,6 +38,7 @@ export default function Sidebar({}: Props) {
                   'bg-primary text-primary-foreground': letter === activeLetter,
                 })}
                 onClick={() => selectActiveLetter(letter)}
+                disabled={isArticleQueryLoading}
               >
                 {letter}
               </Button>
@@ -41,28 +47,29 @@ export default function Sidebar({}: Props) {
         </ul>
       </ScrollArea>
 
-      <ScrollArea className="h-full flex-1 border-x pb-12">
+      <ScrollArea className="relative h-full flex-1 border-x pb-12">
         <ul className="h-full">
-          {articles
-            ? articles.map((article) => (
-                <li key={article.id}>
-                  <Link
-                    href={'/articles/' + article.id}
-                    className={cn(
-                      buttonVariants({
-                        variant:
-                          article.id === activeArticle?.id
-                            ? 'default'
-                            : 'ghost',
-                        className: 'w-full rounded-none py-6',
-                      }),
-                    )}
-                  >
-                    {article.title}
-                  </Link>
-                </li>
-              ))
-            : null}
+          {isArticleQueryLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <LoadingSpinner />
+            </div>
+          )}
+          {articles?.map((article) => (
+            <li key={article.id}>
+              <Link
+                href={'/articles/' + article.id}
+                className={cn(
+                  buttonVariants({
+                    variant:
+                      article.id === activeArticle?.id ? 'default' : 'ghost',
+                    className: 'w-full rounded-none py-6',
+                  }),
+                )}
+              >
+                {article.title}
+              </Link>
+            </li>
+          ))}
         </ul>
       </ScrollArea>
     </aside>
