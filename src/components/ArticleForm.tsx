@@ -1,10 +1,12 @@
 'use client';
 
-import { Article } from '@prisma/client';
+import type { Article } from '@prisma/client';
 import type { JSONContent } from 'novel';
+import { useEffect } from 'react';
 
 import useArticleForm from '~/hooks/use-article-form';
 import { cn } from '~/lib/utils';
+import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
 
 import Editor from './Editor/Editor';
 import { Button } from './ui/button';
@@ -17,11 +19,10 @@ import {
   FormMessage,
 } from './ui/form';
 import { Input } from './ui/input';
-import { ScrollArea } from './ui/scroll-area';
 
 type Props = {
   className?: string;
-  onClose?: () => void;
+  onComplete?: () => void;
   defaultValues?: {
     title: Article['title'];
     content: Article['content'];
@@ -29,10 +30,20 @@ type Props = {
 };
 export default function ArticleForm({
   className,
-  onClose,
+  onComplete,
   defaultValues,
 }: Props) {
-  const { form, onSubmit } = useArticleForm({ onClose, defaultValues });
+  const { form, onSubmit } = useArticleForm({
+    onComplete,
+    defaultValues,
+  });
+  const { resetSelection } = useBreadcrumbsContext();
+
+  useEffect(() => {
+    if (!defaultValues) {
+      resetSelection();
+    }
+  }, [defaultValues, resetSelection]);
 
   return (
     <Form {...form}>
@@ -61,21 +72,11 @@ export default function ArticleForm({
             <FormItem className="w-full">
               <FormLabel>Content</FormLabel>
               <FormControl>
-                {defaultValues ? (
-                  <Editor
-                    className="is-editing min-h-72"
-                    initialContent={field.value as JSONContent}
-                    onContentChange={field.onChange}
-                  />
-                ) : (
-                  <ScrollArea className="w-full rounded border border-border [&>div>div]:w-full [&>div>div]:table-fixed">
-                    <Editor
-                      className="is-editing max-h-72 min-h-36 w-full break-words border-none"
-                      initialContent={field.value as JSONContent}
-                      onContentChange={field.onChange}
-                    />
-                  </ScrollArea>
-                )}
+                <Editor
+                  className="is-editing min-h-72"
+                  initialContent={field.value as JSONContent}
+                  onContentChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

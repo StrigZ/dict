@@ -15,6 +15,7 @@ type BreadcrumbsContext = {
   activeLetter: string | null;
   selectActiveArticle: (article: Article) => void;
   selectActiveLetter: (letter: string) => void;
+  resetSelection: () => void;
 };
 
 const breadcrumbsContext = createContext<BreadcrumbsContext>({
@@ -24,6 +25,9 @@ const breadcrumbsContext = createContext<BreadcrumbsContext>({
     // do nothing
   },
   selectActiveLetter: () => {
+    // do nothing
+  },
+  resetSelection: () => {
     // do nothing
   },
 });
@@ -50,14 +54,27 @@ export default function BreadcrumbsContextProvider({
       setActiveLetter(letter);
     }, []);
 
+  const resetSelection: BreadcrumbsContext['resetSelection'] =
+    useCallback(() => {
+      setActiveArticle(null);
+      setActiveLetter(null);
+    }, []);
+
   const value: BreadcrumbsContext = useMemo(
     () => ({
       activeArticle,
       selectActiveArticle,
       activeLetter,
       selectActiveLetter,
+      resetSelection,
     }),
-    [activeArticle, selectActiveArticle, activeLetter, selectActiveLetter],
+    [
+      activeArticle,
+      selectActiveArticle,
+      activeLetter,
+      selectActiveLetter,
+      resetSelection,
+    ],
   );
   return (
     <breadcrumbsContext.Provider value={value}>

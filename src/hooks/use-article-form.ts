@@ -12,14 +12,14 @@ import { api } from '~/trpc/react';
 import { useToast } from './use-toast';
 
 export default function useArticleForm({
-  onClose,
+  onComplete,
   defaultValues,
 }: {
   defaultValues?: {
     title: Article['title'];
     content: Article['content'];
   };
-  onClose?: () => void;
+  onComplete?: () => void;
 }) {
   const { toast } = useToast();
 
@@ -53,7 +53,7 @@ export default function useArticleForm({
       void utils.article.getByLetter.invalidate({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
-      onClose?.();
+      onComplete?.();
       form.reset();
       router.push('/articles/' + id);
     },
@@ -67,7 +67,9 @@ export default function useArticleForm({
       void utils.article.getByLetter.invalidate({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
-      onClose?.();
+      void utils.article.getStartingLetters.invalidate();
+
+      onComplete?.();
     },
   });
 
