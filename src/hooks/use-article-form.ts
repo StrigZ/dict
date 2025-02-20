@@ -54,8 +54,14 @@ export default function useArticleForm({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
       onComplete?.();
-      form.reset();
       router.push('/articles/' + id);
+    },
+    onError: ({ message }) => {
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'destructive',
+      });
     },
   });
 

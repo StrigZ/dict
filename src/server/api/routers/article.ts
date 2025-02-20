@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
@@ -37,6 +38,17 @@ export const articleRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ title: z.string().min(1), content: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
+      const doesExist = await ctx.db.article.findFirst({
+        where: { title: input.title, createdById: ctx.session.user.id },
+      });
+
+      if (doesExist) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'An article with this title already exists.',
+        });
+      }
+
       return ctx.db.article.create({
         data: {
           createdBy: { connect: { id: ctx.session.user.id } },
