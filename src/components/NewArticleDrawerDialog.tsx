@@ -33,7 +33,7 @@ export function NewArticleDrawerDialog() {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button className="absolute bottom-8 right-8">
+          <Button className="absolute bottom-8 right-8 shadow">
             New <Plus />
           </Button>
         </DialogTrigger>
@@ -50,7 +50,7 @@ export function NewArticleDrawerDialog() {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button className="absolute bottom-6 right-6">
+        <Button className="absolute bottom-6 right-6 shadow">
           New <Plus />
         </Button>
       </DrawerTrigger>

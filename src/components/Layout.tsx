@@ -16,14 +16,14 @@ export default async function Layout({ children }: Props) {
   }
 
   return (
-    <main className="container relative mx-auto flex h-screen flex-col overflow-hidden">
+    <main className="relative mx-auto flex h-screen flex-col overflow-y-hidden">
       <Header />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="container relative mx-auto flex flex-1 overflow-y-hidden">
         <Sidebar />
         {children}
-        <Toaster />
+        <NewArticleDrawerDialog />
       </div>
-      <NewArticleDrawerDialog />
+      <Toaster />
     </main>
   );
 }

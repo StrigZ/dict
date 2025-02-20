@@ -60,13 +60,13 @@ export default function Editor({
           },
           attributes: {
             class: cn(
-              `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full border border-border rounded`,
+              `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full rounded  border border-border`,
               className,
             ),
           },
         }}
         extensions={extensions}
-        className={cn(className)}
+        className={cn('w-full', className)}
       >
         <EditorCommand className="z-[9999] h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
           <EditorCommandEmpty className="px-2 text-muted-foreground">

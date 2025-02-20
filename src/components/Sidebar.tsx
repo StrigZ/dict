@@ -21,8 +21,8 @@ export default function Sidebar({}: Props) {
   );
 
   return (
-    <aside className="flex w-[400px] gap-4 overflow-hidden border-border pb-2 pr-4">
-      <ScrollArea className="h-full pl-4">
+    <aside className="flex w-[400px] overflow-hidden border-border">
+      <ScrollArea className="h-full px-4 pb-12">
         <ul className="flex h-full flex-col">
           {startingLetters.map(({ letter }) => (
             <li key={letter}>
@@ -41,7 +41,7 @@ export default function Sidebar({}: Props) {
         </ul>
       </ScrollArea>
 
-      <ScrollArea className="h-full flex-1 border-x">
+      <ScrollArea className="h-full flex-1 border-x pb-12">
         <ul className="h-full">
           {articles
             ? articles.map((article) => (

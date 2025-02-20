@@ -11,7 +11,7 @@ export default async function Header({}: Props) {
   const session = await auth();
 
   return (
-    <header className="flex items-center justify-center gap-4 p-4">
+    <header className="container mx-auto flex items-center justify-center gap-4 p-4">
       <ThemeButton />
       <SearchBar />
       <Link

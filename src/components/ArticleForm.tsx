@@ -37,17 +37,17 @@ export default function ArticleForm({
   return (
     <Form {...form}>
       <form
-        className={cn('grid items-start gap-4', className)}
+        className={cn('flex w-full flex-col items-start gap-4', className)}
         onSubmit={onSubmit}
       >
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-full">
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} className="px-4" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -58,19 +58,19 @@ export default function ArticleForm({
           control={form.control}
           name="content"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-full">
               <FormLabel>Content</FormLabel>
               <FormControl>
                 {defaultValues ? (
                   <Editor
-                    className="min-h-72"
+                    className="is-editing min-h-72"
                     initialContent={field.value as JSONContent}
                     onContentChange={field.onChange}
                   />
                 ) : (
-                  <ScrollArea>
+                  <ScrollArea className="w-full rounded border border-border [&>div>div]:w-full [&>div>div]:table-fixed">
                     <Editor
-                      className="max-h-72 min-h-36"
+                      className="is-editing max-h-72 min-h-36 w-full break-words border-none"
                       initialContent={field.value as JSONContent}
                       onContentChange={field.onChange}
                     />
@@ -82,8 +82,11 @@ export default function ArticleForm({
           )}
         />
 
-        <Button type="submit" className={cn({ 'mr-auto': defaultValues })}>
-          {defaultValues ? 'Edit' : 'Create'}
+        <Button
+          type="submit"
+          className={cn({ 'sticky bottom-8 left-8 shadow': defaultValues })}
+        >
+          {defaultValues ? 'Save' : 'Create'}
         </Button>
       </form>
     </Form>
