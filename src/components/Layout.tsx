@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '~/server/auth';
 
-import Header from './Header';
+import Header from './Header/Header';
 import { NewArticleButton } from './NewArticleButton';
 import Sidebar from './Sidebar';
 import { ScrollArea } from './ui/scroll-area';

@@ -2,12 +2,11 @@ import Link from 'next/link';
 
 import { auth } from '~/server/auth';
 
+import { ThemeButton } from '../ThemeButton';
+import { buttonVariants } from '../ui/button';
 import SearchBar from './SearchBar';
-import { ThemeButton } from './ThemeButton';
-import { buttonVariants } from './ui/button';
 
-type Props = {};
-export default async function Header({}: Props) {
+export default async function Header() {
   const session = await auth();
 
   return (

@@ -15,9 +15,9 @@ import { useDebounceValue, useOnClickOutside } from 'usehooks-ts';
 
 import { api } from '~/trpc/react';
 
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 import SearchBarDropdown from './SearchBarDropdown';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
 
 export default function SearchBar() {
   const [isOpen, setIsOpen] = useState(false);
