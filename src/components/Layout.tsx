@@ -5,6 +5,7 @@ import { api } from '~/trpc/server';
 
 import Header from './Header/Header';
 import { NewArticleButton } from './NewArticleButton';
+import PlaygroundButton from './PlaygroundButton';
 import Sidebar from './Sidebar';
 import { ScrollArea } from './ui/scroll-area';
 import { Toaster } from './ui/toaster';
@@ -33,7 +34,10 @@ export default async function Layout({ children }: Props) {
             {children}
           </article>
         </ScrollArea>
-        <NewArticleButton />
+        <div className="absolute bottom-8 right-8 flex items-center gap-2">
+          <PlaygroundButton />
+          <NewArticleButton />
+        </div>
       </div>
       <Toaster />
     </main>

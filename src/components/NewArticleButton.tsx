@@ -9,7 +9,7 @@ export function NewArticleButton() {
       href="/articles/new"
       className={buttonVariants({
         variant: 'default',
-        className: 'absolute bottom-8 right-8 shadow',
+        className: 'shadow',
       })}
     >
       New <Plus />
