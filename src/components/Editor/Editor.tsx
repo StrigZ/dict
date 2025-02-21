@@ -31,11 +31,15 @@ type Props = {
   initialContent?: Article['content'];
   onContentChange: (value: Article['content']) => void;
   className?: string;
+  onKeyDown?: () => void; //
+  onSave?: () => void; //
 };
 export default function Editor({
   initialContent,
   className,
   onContentChange,
+  onKeyDown,
+  onSave,
 }: Props) {
   const [openNode, setOpenNode] = useState(false);
   const [openLink, setOpenLink] = useState(false);
@@ -45,6 +49,7 @@ export default function Editor({
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
       onContentChange(json);
+      onSave?.();
     },
     500,
   );
@@ -56,7 +61,10 @@ export default function Editor({
         onUpdate={({ editor }) => debouncedUpdates(editor)}
         editorProps={{
           handleDOMEvents: {
-            keydown: (_view, event) => handleCommandNavigation(event),
+            keydown: (_view, event) => {
+              handleCommandNavigation(event);
+              onKeyDown?.();
+            },
           },
           attributes: {
             class: cn(

@@ -14,8 +14,7 @@ import { extensions } from './Editor/Editor';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 
-type Props = {};
-export default function Article({}: Props) {
+export default function Article() {
   const params = useParams();
   const router = useRouter();
   const [data] = api.article.getSingle.useSuspenseQuery({
@@ -23,9 +22,9 @@ export default function Article({}: Props) {
   });
   const utils = api.useUtils();
   const deleteArticle = api.article.delete.useMutation({
-    onSuccess: () => {
-      void utils.article.getByLetter.invalidate();
-      void utils.article.getStartingLetters.invalidate();
+    onSuccess: async () => {
+      await utils.article.getByLetter.invalidate();
+      await utils.article.getStartingLetters.invalidate();
       router.push('/');
     },
   });

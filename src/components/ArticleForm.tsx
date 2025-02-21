@@ -2,7 +2,7 @@
 
 import type { Article } from '@prisma/client';
 import type { JSONContent } from 'novel';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import useArticleForm from '~/hooks/use-article-form';
 import { cn } from '~/lib/utils';
@@ -33,12 +33,12 @@ export default function ArticleForm({
   onComplete,
   defaultValues,
 }: Props) {
-  const { form, onSubmit } = useArticleForm({
+  const { form, onSubmit, isDisabled } = useArticleForm({
     onComplete,
     defaultValues,
   });
   const { resetSelection } = useBreadcrumbsContext();
-
+  const [isEditorSaved, setIsEditorSaved] = useState(true); // State to track if the editor is saved
   useEffect(() => {
     if (!defaultValues) {
       resetSelection();
@@ -75,7 +75,16 @@ export default function ArticleForm({
                 <Editor
                   className="is-editing min-h-72"
                   initialContent={field.value as JSONContent}
-                  onContentChange={field.onChange}
+                  onContentChange={(content) => {
+                    field.onChange(content);
+                    setIsEditorSaved(true);
+                    console.log('saved');
+                  }}
+                  onKeyDown={() => {
+                    if (isEditorSaved) {
+                      setIsEditorSaved(false);
+                    }
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -86,6 +95,7 @@ export default function ArticleForm({
         <Button
           type="submit"
           className={cn({ 'sticky bottom-8 left-8 shadow': defaultValues })}
+          disabled={isDisabled || !isEditorSaved}
         >
           {defaultValues ? 'Save' : 'Create'}
         </Button>

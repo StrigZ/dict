@@ -5,6 +5,7 @@ import { Article } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
 import type { JSONContent } from 'novel';
 import { useForm } from 'react-hook-form';
+import { useDebounceCallback } from 'usehooks-ts';
 import { z } from 'zod';
 
 import { api } from '~/trpc/react';
@@ -48,9 +49,9 @@ export default function useArticleForm({
   });
 
   const createArticle = api.article.create.useMutation({
-    onSuccess: ({ title: newArticleTitle, id }) => {
-      void utils.article.getStartingLetters.invalidate();
-      void utils.article.getByLetter.invalidate({
+    onSuccess: async ({ title: newArticleTitle, id }) => {
+      await utils.article.getStartingLetters.invalidate();
+      await utils.article.getByLetter.invalidate({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
       onComplete?.();
@@ -66,15 +67,15 @@ export default function useArticleForm({
   });
 
   const updateArticle = api.article.update.useMutation({
-    onSuccess: ({ title: newArticleTitle, id }) => {
+    onSuccess: async ({ title: newArticleTitle, id }) => {
       if (newArticleTitle !== defaultValues?.title) {
-        void utils.article.getByLetter.invalidate({
+        await utils.article.getByLetter.invalidate({
           startsWith: newArticleTitle[0]?.toUpperCase(),
         });
-        void utils.article.getStartingLetters.invalidate();
+        await utils.article.getStartingLetters.invalidate();
       }
 
-      void utils.article.getSingle.invalidate({
+      await utils.article.getSingle.invalidate({
         id,
       });
 
@@ -118,5 +119,10 @@ export default function useArticleForm({
   return {
     form,
     onSubmit: form.handleSubmit(onSubmit),
+    isDisabled:
+      createArticle.isPending ||
+      updateArticle.isPending ||
+      createArticle.isSuccess ||
+      updateArticle.isSuccess,
   };
 }
