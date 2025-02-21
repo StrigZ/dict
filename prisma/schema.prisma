@@ -26,7 +26,20 @@ model Article {
     title String
     content Json @db.Json
 
-    @@index([title])
+    @@index([title(sort: Asc), createdById, id])
+}
+
+model Playground {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String @unique
+
+    content Json @db.Json
+
+    @@index([createdById])
 }
 
 // Necessary for Next auth
@@ -65,7 +78,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Article[]
+    articles      Article[]
+    playground    Playground? 
 }
 
 model VerificationToken {
