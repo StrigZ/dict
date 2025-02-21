@@ -3,8 +3,9 @@
 import { generateHTML } from '@tiptap/html';
 import { CircleX, SquarePen } from 'lucide-react';
 import type { JSONContent } from 'novel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
 import { api } from '~/trpc/react';
 
 import { extensions } from '../Editor/Editor';
@@ -15,6 +16,11 @@ export default function Playground() {
   const [data] = api.playground.get.useSuspenseQuery();
 
   const [isEditing, setIsEditing] = useState(false);
+  const { resetSelection } = useBreadcrumbsContext();
+
+  useEffect(() => {
+    resetSelection();
+  }, [resetSelection]);
 
   return (
     <>
