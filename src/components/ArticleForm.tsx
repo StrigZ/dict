@@ -58,7 +58,7 @@ export default function ArticleForm({
             <FormItem className="w-full">
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} className="px-4" />
+                <Input {...field} className="px-4" autoFocus />
               </FormControl>
               <FormMessage />
             </FormItem>
