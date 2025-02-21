@@ -4,7 +4,13 @@ import { skipToken } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { type ChangeEvent, type FormEvent, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useDebounceValue, useOnClickOutside } from 'usehooks-ts';
 
 import { api } from '~/trpc/react';
@@ -23,18 +29,30 @@ export default function SearchBar() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   useOnClickOutside(formRef, () => setIsOpen(false));
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const {
     data: searchData,
     isLoading,
     refetch,
-  } = api.article.getByLetter.useQuery(
+    fetchNextPage,
+    isFetchingNextPage,
+  } = api.article.infiniteArticles.useInfiniteQuery(
     {
       startsWith: debouncedQuery ?? skipToken,
+      limit: 10,
     },
     {
       enabled: debouncedQuery.length > 0,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
   );
+
+  useEffect(() => {
+    if (dropdownRef.current) {
+      dropdownRef.current.scrollTo({ top: 0 });
+    }
+  }, [debouncedQuery]);
 
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!isOpen) {
@@ -54,7 +72,7 @@ export default function SearchBar() {
   const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchData) {
-      const firstResult = searchData[0];
+      const firstResult = searchData.pages[0]?.items[0];
       router.push('/articles/' + firstResult?.id);
       setSearchQuery('');
       setIsOpen(false);
@@ -80,13 +98,17 @@ export default function SearchBar() {
         <AnimatePresence>
           {isOpen && (
             <SearchBarDropdown
-              data={searchData}
+              data={searchData?.pages.map((page) => page.items).flat()}
               isLoading={isLoading}
-              isQueryEmpty={searchQuery.length === 0}
+              isQueryEmpty={debouncedQuery.length === 0}
               onResultClick={() => {
                 setIsOpen(false);
                 setSearchQuery('');
+                setDebouncedQuery('');
               }}
+              isFetchingNextPage={isFetchingNextPage}
+              fetchMore={() => fetchNextPage()}
+              dropdownRef={dropdownRef}
             />
           )}
         </AnimatePresence>

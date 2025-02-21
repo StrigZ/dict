@@ -4,11 +4,42 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 
 export const articleRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.article.findMany({
-      where: { createdById: ctx.session.user.id },
-    });
-  }),
+  infiniteArticles: protectedProcedure
+    .input(
+      z.object({
+        startsWith: z.string(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
+      const items = await ctx.db.article.findMany({
+        where: {
+          title: { startsWith: input.startsWith, mode: 'insensitive' },
+          createdById: ctx.session.user.id,
+        },
+        select: {
+          id: true,
+          title: true,
+        },
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          title: 'asc',
+        },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    }),
   getSingle: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
