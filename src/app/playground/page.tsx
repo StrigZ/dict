@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 import Playground from '~/components/Playground/Playground';
-import ArticleSkeleton from '~/components/skeletons/ArticleSkeleton';
+import PlaygroundSkeleton from '~/components/skeletons/PlaygroundSkeleton';
 import { auth } from '~/server/auth';
 import { HydrateClient, api } from '~/trpc/server';
 
@@ -14,7 +14,7 @@ export default async function PlaygroundPage() {
 
   return (
     <HydrateClient>
-      <Suspense fallback={<ArticleSkeleton />}>
+      <Suspense fallback={<PlaygroundSkeleton />}>
         <Playground />
       </Suspense>
     </HydrateClient>
