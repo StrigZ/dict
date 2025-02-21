@@ -51,7 +51,7 @@ export default function useArticleForm({
   const createArticle = api.article.create.useMutation({
     onSuccess: async ({ title: newArticleTitle, id }) => {
       await utils.article.getStartingLetters.invalidate();
-      await utils.article.getByLetter.invalidate({
+      await utils.article.infiniteArticles.invalidate({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
       onComplete?.();
@@ -69,7 +69,7 @@ export default function useArticleForm({
   const updateArticle = api.article.update.useMutation({
     onSuccess: async ({ title: newArticleTitle, id }) => {
       if (newArticleTitle !== defaultValues?.title) {
-        await utils.article.getByLetter.invalidate({
+        await utils.article.infiniteArticles.invalidate({
           startsWith: newArticleTitle[0]?.toUpperCase(),
         });
         await utils.article.getStartingLetters.invalidate();

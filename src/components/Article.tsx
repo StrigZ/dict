@@ -22,8 +22,10 @@ export default function Article() {
   });
   const utils = api.useUtils();
   const deleteArticle = api.article.delete.useMutation({
-    onSuccess: async () => {
-      await utils.article.getByLetter.invalidate();
+    onSuccess: async ({ title }) => {
+      await utils.article.infiniteArticles.invalidate({
+        startsWith: title[0]?.toUpperCase(),
+      });
       await utils.article.getStartingLetters.invalidate();
       router.push('/');
     },
