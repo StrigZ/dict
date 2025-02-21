@@ -7,9 +7,9 @@ import { useState } from 'react';
 
 import { api } from '~/trpc/react';
 
-import { extensions } from './Editor/Editor';
+import { extensions } from '../Editor/Editor';
+import { Button } from '../ui/button';
 import PlaygroundForm from './PlaygroundForm';
-import { Button } from './ui/button';
 
 export default function Playground() {
   const [data] = api.playground.get.useSuspenseQuery();

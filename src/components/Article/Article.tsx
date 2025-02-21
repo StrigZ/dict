@@ -9,10 +9,10 @@ import { useEffect, useState } from 'react';
 import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
 import { api } from '~/trpc/react';
 
+import { extensions } from '../Editor/Editor';
+import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
 import ArticleForm from './ArticleForm';
-import { extensions } from './Editor/Editor';
-import { Button } from './ui/button';
-import { Separator } from './ui/separator';
 
 export default function Article() {
   const params = useParams();

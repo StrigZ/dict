@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import Article from '~/components/Article';
+import Article from '~/components/Article/Article';
 import ArticleSkeleton from '~/components/skeletons/ArticleSkeleton';
 import { auth } from '~/server/auth';
 import { HydrateClient, api } from '~/trpc/server';

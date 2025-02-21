@@ -1,4 +1,4 @@
-import ArticleForm from '~/components/ArticleForm';
+import ArticleForm from '~/components/Article/ArticleForm';
 import { auth } from '~/server/auth';
 import { HydrateClient, api } from '~/trpc/server';
 
