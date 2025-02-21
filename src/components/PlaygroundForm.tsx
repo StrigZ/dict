@@ -1,12 +1,11 @@
 'use client';
 
-import type { Article } from '@prisma/client';
+import type { Playground } from '@prisma/client';
 import type { JSONContent } from 'novel';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import useArticleForm from '~/hooks/use-article-form';
+import usePlaygroundForm from '~/hooks/use-playground-form';
 import { cn } from '~/lib/utils';
-import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
 
 import Editor from './Editor/Editor';
 import { Button } from './ui/button';
@@ -18,32 +17,24 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { Input } from './ui/input';
 
 type Props = {
   className?: string;
   onComplete?: () => void;
-  defaultValues?: {
-    title: Article['title'];
-    content: Article['content'];
+  defaultValues: {
+    content: Playground['content'];
   };
 };
-export default function ArticleForm({
+export default function PlaygroundForm({
   className,
   onComplete,
   defaultValues,
 }: Props) {
-  const { form, onSubmit, isDisabled } = useArticleForm({
+  const { form, onSubmit, isDisabled } = usePlaygroundForm({
     onComplete,
     defaultValues,
   });
-  const { resetSelection } = useBreadcrumbsContext();
   const [isEditorSaved, setIsEditorSaved] = useState(true); // State to track if the editor is saved
-  useEffect(() => {
-    if (!defaultValues) {
-      resetSelection();
-    }
-  }, [defaultValues, resetSelection]);
 
   return (
     <Form {...form}>
@@ -51,20 +42,6 @@ export default function ArticleForm({
         className={cn('flex w-full flex-col items-start gap-4', className)}
         onSubmit={onSubmit}
       >
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input {...field} className="px-4" autoFocus />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="content"

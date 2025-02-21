@@ -47,7 +47,7 @@ export default function Article() {
   if (!data) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-8 px-8 text-center text-xl">
-        Article doesn't exist.
+        Article doesn&apos;t exist.
       </div>
     );
   }
