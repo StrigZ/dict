@@ -50,6 +50,7 @@ export default function SearchBarDropdown({
                 className="flex w-full flex-col items-start justify-center rounded-none border-b border-border px-4 py-4 peer-last:border-b-0"
                 onClick={() => handleResultClick(id)}
                 variant="ghost"
+                type="button"
               >
                 <p className="font-semibold">{title}</p>
               </Button>
