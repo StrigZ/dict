@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { auth } from '~/server/auth';
+import { api } from '~/trpc/server';
 
 import Header from './Header/Header';
 import { NewArticleButton } from './NewArticleButton';
@@ -11,6 +12,12 @@ import { Toaster } from './ui/toaster';
 type Props = { children: React.ReactNode };
 export default async function Layout({ children }: Props) {
   const session = await auth();
+
+  void api.article.infiniteArticles.prefetchInfinite({
+    startsWith: '',
+    limit: 20,
+  });
+  void api.article.getStartingLetters.prefetch();
 
   if (!session?.user) {
     redirect('/api/auth/signin');

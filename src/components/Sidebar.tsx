@@ -1,7 +1,8 @@
 'use client';
 
-import { skipToken } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useIntersectionObserver } from 'usehooks-ts';
 
 import { cn } from '~/lib/utils';
 import { useBreadcrumbsContext } from '~/providers/breadcrumbs-provider';
@@ -18,17 +19,37 @@ export default function Sidebar() {
 
   const { data: startingLetters, isLoading: isLettersQueryLoading } =
     api.article.getStartingLetters.useQuery();
-  const { data: articles, isLoading: isArticleQueryLoading } =
-    api.article.getByLetter.useQuery(
-      activeLetter ? { startsWith: activeLetter } : skipToken,
-    );
+
+  const {
+    data: articlesQueryData,
+    isLoading: isArticleQueryLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = api.article.infiniteArticles.useInfiniteQuery(
+    { startsWith: activeLetter ?? '', limit: 20 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
+
+  const { isIntersecting, ref: observerRef } = useIntersectionObserver({
+    threshold: 0.5,
+  });
+
+  useEffect(() => {
+    if (isIntersecting) {
+      void fetchNextPage();
+    }
+  }, [fetchNextPage, isIntersecting]);
+
+  const articles = articlesQueryData?.pages.map((page) => page.items).flat();
 
   return isLettersQueryLoading ? (
     <SidebarSkeleton />
   ) : (
     <aside className="flex w-[400px] overflow-hidden border-border">
-      <ScrollArea className="h-full px-4 pb-12">
-        <ul className="flex h-full flex-col">
+      <ScrollArea className="h-full px-4">
+        <ul className="flex h-full flex-col pb-12">
           {startingLetters?.map(({ letter }) => (
             <li key={letter}>
               <Button
@@ -47,8 +68,8 @@ export default function Sidebar() {
         </ul>
       </ScrollArea>
 
-      <ScrollArea className="relative h-full flex-1 border-x pb-12">
-        <ul className="h-full">
+      <ScrollArea className="relative h-full flex-1 border-x">
+        <ul className="h-full pb-12">
           {isArticleQueryLoading && (
             <div className="absolute inset-0 flex items-center justify-center">
               <LoadingSpinner />
@@ -70,6 +91,13 @@ export default function Sidebar() {
               </Link>
             </li>
           ))}
+          {isFetchingNextPage ? (
+            <div className="flex w-full items-center justify-center p-2">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div ref={observerRef} />
+          )}
         </ul>
       </ScrollArea>
     </aside>
