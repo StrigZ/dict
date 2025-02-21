@@ -4,8 +4,8 @@ import { skipToken } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { type ChangeEvent, type FormEvent, useState } from 'react';
-import { useDebounceValue } from 'usehooks-ts';
+import { type ChangeEvent, type FormEvent, useRef, useState } from 'react';
+import { useDebounceValue, useOnClickOutside } from 'usehooks-ts';
 
 import { api } from '~/trpc/react';
 
@@ -21,7 +21,8 @@ export default function SearchBar() {
     500,
   );
   const router = useRouter();
-
+  const formRef = useRef<HTMLFormElement>(null);
+  useOnClickOutside(formRef, () => setIsOpen(false));
   const {
     data: searchData,
     isLoading,
@@ -64,6 +65,7 @@ export default function SearchBar() {
     <form
       className="flex w-full items-center space-x-2"
       onSubmit={handleSearchSubmit}
+      ref={formRef}
     >
       <label className="relative flex flex-1 items-center gap-2 rounded-lg border border-input px-2 py-1 focus-within:ring-1 focus-within:ring-ring">
         <Search />
@@ -81,7 +83,6 @@ export default function SearchBar() {
               data={searchData}
               isLoading={isLoading}
               isQueryEmpty={searchQuery.length === 0}
-              onClickOutside={() => setIsOpen(false)}
               onResultClick={() => {
                 setIsOpen(false);
                 setSearchQuery('');

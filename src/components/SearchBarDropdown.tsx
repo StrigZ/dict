@@ -2,8 +2,6 @@
 
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
-import { useOnClickOutside } from 'usehooks-ts';
 
 import LoadingSpinner from './ui/LoadingSpinner';
 import { Button } from './ui/button';
@@ -13,18 +11,14 @@ type Props = {
   data?: { title: string; id: number }[];
   isLoading: boolean;
   isQueryEmpty: boolean;
-  onClickOutside: () => void;
   onResultClick: () => void;
 };
 export default function SearchBarDropdown({
-  onClickOutside,
   isLoading,
   onResultClick,
   data,
   isQueryEmpty,
 }: Props) {
-  const popoverRef = useRef(null);
-  useOnClickOutside(popoverRef, onClickOutside);
   const router = useRouter();
 
   const handleResultClick = (id: number) => {
@@ -40,7 +34,6 @@ export default function SearchBarDropdown({
       initial={{ opacity: 0 }}
       exit={{ opacity: 0 }}
       className="absolute inset-x-0 -bottom-2 z-50 h-72 w-full translate-y-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow"
-      ref={popoverRef}
     >
       <ScrollArea className="relative h-full">
         {(isLoading || data?.length === 0 || isQueryEmpty) && (
