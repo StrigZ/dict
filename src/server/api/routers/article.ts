@@ -24,6 +24,10 @@ export const articleRouter = createTRPCRouter({
           title: { startsWith: input.startsWith, mode: 'insensitive' },
           createdById: ctx.session.user.id,
         },
+        select: {
+          id: true,
+          title: true,
+        },
       });
     }),
   getStartingLetters: protectedProcedure.query(async ({ ctx }) => {
