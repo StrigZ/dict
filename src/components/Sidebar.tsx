@@ -26,7 +26,7 @@ export default function Sidebar({ className }: { className?: string }) {
     isLoading: isArticleQueryLoading,
     isFetchingNextPage,
     fetchNextPage,
-  } = api.article.infiniteArticles.useInfiniteQuery(
+  } = api.article.getInfiniteArticlesByLetter.useInfiniteQuery(
     { startsWith: activeLetter ?? '', limit: 20 },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,

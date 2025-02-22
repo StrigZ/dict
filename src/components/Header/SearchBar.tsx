@@ -37,9 +37,9 @@ export default function SearchBar() {
     refetch,
     fetchNextPage,
     isFetchingNextPage,
-  } = api.article.infiniteArticles.useInfiniteQuery(
+  } = api.article.getInfiniteArticlesSearch.useInfiniteQuery(
     {
-      startsWith: debouncedQuery ?? skipToken,
+      contains: debouncedQuery ?? skipToken,
       limit: 10,
     },
     {

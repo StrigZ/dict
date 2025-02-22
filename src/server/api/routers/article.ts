@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 
 export const articleRouter = createTRPCRouter({
-  infiniteArticles: protectedProcedure
+  getInfiniteArticlesByLetter: protectedProcedure
     .input(
       z.object({
         startsWith: z.string(),
@@ -18,6 +18,42 @@ export const articleRouter = createTRPCRouter({
       const items = await ctx.db.article.findMany({
         where: {
           title: { startsWith: input.startsWith, mode: 'insensitive' },
+          createdById: ctx.session.user.id,
+        },
+        select: {
+          id: true,
+          title: true,
+        },
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          title: 'asc',
+        },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    }),
+  getInfiniteArticlesSearch: protectedProcedure
+    .input(
+      z.object({
+        contains: z.string(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
+      const items = await ctx.db.article.findMany({
+        where: {
+          title: { contains: input.contains, mode: 'insensitive' },
           createdById: ctx.session.user.id,
         },
         select: {

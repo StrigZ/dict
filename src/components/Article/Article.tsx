@@ -23,7 +23,7 @@ export default function Article() {
   const utils = api.useUtils();
   const deleteArticle = api.article.delete.useMutation({
     onSuccess: async ({ title }) => {
-      await utils.article.infiniteArticles.invalidate({
+      await utils.article.getInfiniteArticlesByLetter.invalidate({
         startsWith: title[0]?.toUpperCase(),
       });
       await utils.article.getStartingLetters.invalidate();

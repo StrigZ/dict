@@ -15,7 +15,7 @@ type Props = { children: React.ReactNode };
 export default async function Layout({ children }: Props) {
   const session = await auth();
 
-  void api.article.infiniteArticles.prefetchInfinite({
+  void api.article.getInfiniteArticlesByLetter.prefetchInfinite({
     startsWith: '',
     limit: 20,
   });
