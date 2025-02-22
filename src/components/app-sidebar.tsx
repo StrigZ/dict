@@ -4,8 +4,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
 } from '~/components/ui/sidebar';
 
 import LoginButton from './LoginButton';
