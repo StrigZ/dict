@@ -90,7 +90,7 @@ export default function Sidebar({ className }: { className?: string }) {
                 )}
                 onClick={() => setOpenMobile(false)}
               >
-                {article.title}
+                {article.title.split(' ')[0]}
               </Link>
             </li>
           ))}
