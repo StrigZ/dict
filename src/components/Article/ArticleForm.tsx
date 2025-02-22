@@ -93,7 +93,7 @@ export default function ArticleForm({
 
         <Button
           type="submit"
-          className={cn({ 'sticky bottom-8 left-8 shadow': defaultValues })}
+          className="sticky bottom-8 left-8 shadow"
           disabled={isDisabled || !isEditorSaved}
         >
           {defaultValues ? 'Save' : 'Create'}

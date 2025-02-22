@@ -33,7 +33,7 @@ export default async function Layout({ children }: Props) {
         <div className="container relative mx-auto flex flex-1 overflow-y-hidden">
           <Sidebar className="hidden w-[400px] overflow-hidden border-border sm:flex" />
           <ScrollArea className="flex h-full flex-1 [&>div>div]:h-full [&>div>div]:w-full [&>div>div]:table-fixed">
-            <article className="relative flex h-full flex-col gap-8 px-12 pt-0">
+            <article className="relative flex h-full flex-col gap-8 px-4 pt-0 sm:px-12">
               {children}
             </article>
           </ScrollArea>
