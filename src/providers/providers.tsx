@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { SidebarProvider } from '~/components/ui/sidebar';
+
 import BreadcrumbsContextProvider from './breadcrumbs-provider';
 import { ThemeProvider } from './theme-provider';
 
@@ -12,7 +14,9 @@ export default function Providers({ children }: Props) {
       enableSystem
       disableTransitionOnChange
     >
-      <BreadcrumbsContextProvider>{children}</BreadcrumbsContextProvider>
+      <BreadcrumbsContextProvider>
+        <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
+      </BreadcrumbsContextProvider>
     </ThemeProvider>
   );
 }

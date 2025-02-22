@@ -12,11 +12,12 @@ import SidebarSkeleton from './skeletons/SidebarSkeleton';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { Button, buttonVariants } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
+import { useSidebar } from './ui/sidebar';
 
-export default function Sidebar() {
+export default function Sidebar({ className }: { className?: string }) {
   const { activeArticle, activeLetter, selectActiveLetter } =
     useBreadcrumbsContext();
-
+  const { setOpenMobile } = useSidebar();
   const { data: startingLetters, isLoading: isLettersQueryLoading } =
     api.article.getStartingLetters.useQuery();
 
@@ -47,9 +48,9 @@ export default function Sidebar() {
   return isLettersQueryLoading ? (
     <SidebarSkeleton />
   ) : (
-    <aside className="hidden w-[400px] overflow-hidden border-border sm:flex">
-      <ScrollArea className="h-full px-4">
-        <ul className="flex h-full flex-col pb-12">
+    <aside className={cn(className)}>
+      <ScrollArea className="h-full pr-2 sm:px-4">
+        <ul className="flex h-full flex-col sm:pb-12">
           {startingLetters?.map(({ letter }) => (
             <li key={letter}>
               <Button
@@ -68,8 +69,8 @@ export default function Sidebar() {
         </ul>
       </ScrollArea>
 
-      <ScrollArea className="relative h-full flex-1 border-x">
-        <ul className="h-full pb-12">
+      <ScrollArea className="relative h-full flex-1 border-l sm:border-x [&>div>div]:!block">
+        <ul className="h-full sm:pb-12">
           {isArticleQueryLoading && (
             <div className="absolute inset-0 flex items-center justify-center">
               <LoadingSpinner />
@@ -83,9 +84,11 @@ export default function Sidebar() {
                   buttonVariants({
                     variant:
                       article.id === activeArticle?.id ? 'default' : 'ghost',
-                    className: 'w-full rounded-none py-6',
+                    className:
+                      'w-full justify-start truncate rounded-none sm:justify-center sm:py-6',
                   }),
                 )}
+                onClick={() => setOpenMobile(false)}
               >
                 {article.title}
               </Link>

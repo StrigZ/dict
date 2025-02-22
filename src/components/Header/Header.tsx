@@ -1,27 +1,15 @@
-import { LogIn, LogOut } from 'lucide-react';
-import Link from 'next/link';
-
-import { auth } from '~/server/auth';
-
+import LoginButton from '../LoginButton';
 import { ThemeButton } from '../ThemeButton';
-import { buttonVariants } from '../ui/button';
+import { SidebarTrigger } from '../ui/sidebar';
 import SearchBar from './SearchBar';
 
 export default async function Header() {
-  const session = await auth();
-
   return (
     <header className="container mx-auto flex items-center justify-center gap-4 p-4">
-      <ThemeButton />
+      <SidebarTrigger className="sm:hidden" />
+      <ThemeButton className="hidden sm:flex" />
       <SearchBar />
-      <Link
-        href={session ? '/api/auth/signout' : '/api/auth/signin'}
-        className={buttonVariants({
-          variant: !session ? 'default' : 'outline',
-        })}
-      >
-        {session ? <LogOut /> : <LogIn />}
-      </Link>
+      <LoginButton className="hidden sm:flex" />
     </header>
   );
 }
