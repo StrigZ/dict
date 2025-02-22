@@ -14,7 +14,7 @@ import {
   handleCommandNavigation,
 } from 'novel';
 import { useState } from 'react';
-import { useDebounceCallback } from 'usehooks-ts';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { cn } from '~/lib/utils';
 
@@ -45,25 +45,24 @@ export default function Editor({
   const [openLink, setOpenLink] = useState(false);
   const [openColor, setOpenColor] = useState(false);
 
-  const debouncedUpdates = useDebounceCallback(
-    async (editor: EditorInstance) => {
-      const json = editor.getJSON();
-      onContentChange(json);
-      onSave?.();
-    },
-    500,
-  );
+  const debouncedUpdates = useDebouncedCallback((editor: EditorInstance) => {
+    const json = editor.getJSON();
+    onContentChange(json);
+    onSave?.();
+  }, 500);
 
   return (
     <EditorRoot>
       <EditorContent
         initialContent={initialContent as JSONContent}
-        onUpdate={({ editor }) => debouncedUpdates(editor)}
+        onUpdate={({ editor }) => {
+          onKeyDown?.();
+          debouncedUpdates(editor);
+        }}
         editorProps={{
           handleDOMEvents: {
             keydown: (_view, event) => {
               handleCommandNavigation(event);
-              onKeyDown?.();
             },
           },
           attributes: {
