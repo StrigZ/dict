@@ -113,7 +113,9 @@ export default function SearchBar() {
           )}
         </AnimatePresence>
       </label>
-      <Button type="submit">Search</Button>
+      <Button type="submit" className="hidden sm:block">
+        Search
+      </Button>
     </form>
   );
 }

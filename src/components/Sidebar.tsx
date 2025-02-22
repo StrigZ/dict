@@ -47,7 +47,7 @@ export default function Sidebar() {
   return isLettersQueryLoading ? (
     <SidebarSkeleton />
   ) : (
-    <aside className="flex w-[400px] overflow-hidden border-border">
+    <aside className="hidden w-[400px] overflow-hidden border-border sm:flex">
       <ScrollArea className="h-full px-4">
         <ul className="flex h-full flex-col pb-12">
           {startingLetters?.map(({ letter }) => (

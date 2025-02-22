@@ -1,3 +1,4 @@
+import { LogIn, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 import { auth } from '~/server/auth';
@@ -19,7 +20,7 @@ export default async function Header() {
           variant: !session ? 'default' : 'outline',
         })}
       >
-        {session ? 'Sign out' : 'Sign in'}
+        {session ? <LogOut /> : <LogIn />}
       </Link>
     </header>
   );
