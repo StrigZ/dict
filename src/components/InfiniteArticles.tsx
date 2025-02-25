@@ -85,7 +85,7 @@ export default function InfiniteArticles() {
           <LoadingSpinner />
         </div>
       ) : (
-        <AutoSizer className="[&>div]:!overflow-hidden [&>div]:hover:!overflow-y-scroll">
+        <AutoSizer className="[&>div]:sm:!overflow-hidden [&>div]:sm:hover:!overflow-y-scroll">
           {({ height, width }) => {
             return (
               <InfiniteLoader
