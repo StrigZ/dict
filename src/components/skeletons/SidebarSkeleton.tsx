@@ -2,7 +2,7 @@ import { Skeleton } from '../ui/skeleton';
 
 export default function SidebarSkeleton() {
   return (
-    <aside className="flex w-[400px] overflow-hidden border-border">
+    <aside className="hidden w-[400px] overflow-hidden border-border sm:flex">
       <ul className="flex h-full flex-col gap-1 px-4 pb-12">
         {Array(25)
           .fill(null)
