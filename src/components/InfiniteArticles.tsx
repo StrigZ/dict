@@ -20,6 +20,7 @@ export default function InfiniteArticles() {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    isLoading,
   } = api.article.getInfiniteArticlesByLetter.useInfiniteQuery(
     { startsWith: activeLetter ?? '', limit: 20 },
     {
@@ -78,32 +79,38 @@ export default function InfiniteArticles() {
   };
 
   return (
-    <div className="flex-1">
-      <AutoSizer className="[&>div]:!overflow-hidden [&>div]:hover:!overflow-y-scroll">
-        {({ height, width }) => {
-          return (
-            <InfiniteLoader
-              isItemLoaded={isItemLoaded}
-              itemCount={itemCount}
-              loadMoreItems={loadMoreItems}
-            >
-              {({ onItemsRendered, ref }) => (
-                <FixedSizeList
-                  itemCount={itemCount}
-                  onItemsRendered={onItemsRendered}
-                  ref={ref}
-                  itemSize={48}
-                  height={height}
-                  width={width}
-                  className="scrollbar-thumb-rounded-full scrollbar-gutter scrollbar-hover w-full border-x border-l scrollbar-thin scrollbar-track-transparent sm:border-x sm:pb-12"
-                >
-                  {Article}
-                </FixedSizeList>
-              )}
-            </InfiniteLoader>
-          );
-        }}
-      </AutoSizer>
+    <div className="relative flex-1 border-x border-l sm:border-x">
+      {isLoading ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <AutoSizer className="[&>div]:!overflow-hidden [&>div]:hover:!overflow-y-scroll">
+          {({ height, width }) => {
+            return (
+              <InfiniteLoader
+                isItemLoaded={isItemLoaded}
+                itemCount={itemCount}
+                loadMoreItems={loadMoreItems}
+              >
+                {({ onItemsRendered, ref }) => (
+                  <FixedSizeList
+                    itemCount={itemCount}
+                    onItemsRendered={onItemsRendered}
+                    ref={ref}
+                    itemSize={48}
+                    height={height}
+                    width={width}
+                    className="scrollbar-thumb-rounded-full scrollbar-gutter scrollbar-hover scrollbar-thin scrollbar-track-transparent sm:pb-12"
+                  >
+                    {Article}
+                  </FixedSizeList>
+                )}
+              </InfiniteLoader>
+            );
+          }}
+        </AutoSizer>
+      )}
     </div>
   );
 }
