@@ -112,3 +112,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.scrollbar-gutter {
+  scrollbar-gutter: stable both-edges;
+}

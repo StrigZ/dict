@@ -79,7 +79,7 @@ export default function InfiniteArticles() {
 
   return (
     <div className="flex-1">
-      <AutoSizer>
+      <AutoSizer className="[&>div]:!overflow-hidden [&>div]:hover:!overflow-y-scroll">
         {({ height, width }) => {
           return (
             <InfiniteLoader
@@ -95,7 +95,7 @@ export default function InfiniteArticles() {
                   itemSize={48}
                   height={height}
                   width={width}
-                  className="scrollbar-thumb-rounded-full w-full border-x border-l scrollbar-thin scrollbar-track-transparent sm:border-x sm:pb-12"
+                  className="scrollbar-thumb-rounded-full scrollbar-gutter w-full border-x border-l scrollbar-thin scrollbar-track-transparent sm:border-x sm:pb-12"
                 >
                   {Article}
                 </FixedSizeList>
