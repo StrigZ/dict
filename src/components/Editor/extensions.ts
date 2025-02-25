@@ -1,3 +1,4 @@
+import { Extension } from '@tiptap/core';
 import { cx } from 'class-variance-authority';
 import {
   Color,
@@ -13,6 +14,7 @@ import {
   TiptapUnderline,
   UpdatedImage,
 } from 'novel';
+import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import AutoJoiner from 'tiptap-extension-auto-joiner';
 import GlobalDragHandle from 'tiptap-extension-global-drag-handle';
 
@@ -99,6 +101,85 @@ const autoJoiner = AutoJoiner.configure({
 
 const highlight = HighlightExtension.configure({ multicolor: true });
 
+const AutoEnDash = Extension.create({
+  name: 'autoEnDash',
+
+  addProseMirrorPlugins() {
+    const pluginKey = new PluginKey('autoEnDash');
+
+    return [
+      new Plugin({
+        key: pluginKey,
+        // Track if we've detected a potential en dash pattern
+        state: {
+          init() {
+            return {
+              potentialEnDash: false,
+              startPos: null,
+              patternPos: null,
+            };
+          },
+          apply(_, prev) {
+            return prev; // State persists across transactions
+          },
+        },
+        appendTransaction: (transactions, _, newState) => {
+          // Only proceed if content has changed
+          const docChanged = transactions.some((tr) => tr.docChanged);
+          if (!docChanged) return null;
+
+          // Get the current selection position
+          const { selection } = newState;
+
+          if (!(selection instanceof TextSelection && selection.$cursor)) {
+            return null;
+          }
+
+          const { $cursor } = selection;
+
+          // Check if we have a cursor and it's in a valid text node
+          if (!$cursor?.parent.type.isTextblock) return null;
+
+          // Get the text before the cursor
+          const textBefore = $cursor.parent.textContent.slice(
+            0,
+            $cursor.parentOffset,
+          );
+
+          // Pattern: text + space + hyphen + space + text + space
+          // This regex looks for: a word (\S+) followed by space, hyphen, space (\s+-\s+),
+          // followed by another word (\S+), with a space at the end (\s+$)
+          const completedPattern = /(\S+)(\s+-\s+)(\S+)\s+$/;
+          const match = completedPattern.exec(textBefore);
+
+          if (!match) {
+            return null;
+          }
+
+          // Create a transaction to replace the hyphen with an en dash
+          const tr = newState.tr;
+
+          // Calculate positions for the replacement
+          // Start position is where the space before hyphen begins
+          const matchStart = $cursor.pos - match[0].length;
+          // The specific part we want to replace is just the " - " section
+          if (!match[1] || !match[2]) {
+            return null;
+          }
+
+          const hyphenStart = matchStart + match[1].length;
+          const hyphenEnd = hyphenStart + match[2].length;
+
+          // Replace " - " with " – " (en dash)
+          tr.replaceWith(hyphenStart, hyphenEnd, newState.schema.text(' – '));
+
+          return tr;
+        },
+      }),
+    ];
+  },
+});
+
 export const defaultExtensions = [
   tiptapLink,
   starterKit,
@@ -115,4 +196,5 @@ export const defaultExtensions = [
   TiptapUnderline,
   Color,
   TextStyle,
+  AutoEnDash,
 ];

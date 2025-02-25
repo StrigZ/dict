@@ -50,9 +50,15 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.50.0
         version: 5.66.3(react@18.3.1)
+      '@tiptap/core':
+        specifier: ^2.11.5
+        version: 2.11.5(@tiptap/pm@2.11.5)
       '@tiptap/html':
         specifier: ^2.11.5
         version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)
+      '@tiptap/react':
+        specifier: ^2.11.5
+        version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/client':
         specifier: ^11.0.0-rc.446
         version: 11.0.0-rc.768(@trpc/server@11.0.0-rc.768(typescript@5.7.3))(typescript@5.7.3)
@@ -92,6 +98,9 @@ importers:
       novel:
         specifier: ^1.0.2
         version: 1.0.2(@tiptap/extension-code-block@2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(highlight.js@11.11.1)(lowlight@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      prosemirror-state:
+        specifier: ^1.4.3
+        version: 1.4.3
       react:
         specifier: ^18.3.1
         version: 18.3.1
