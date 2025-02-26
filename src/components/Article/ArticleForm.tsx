@@ -62,15 +62,15 @@ export default function ArticleForm({
                   {...field}
                   onChange={({ target }) => {
                     const title = target.value;
-                    const completedPattern = /(\S+)(\s+-\s+)(\S+)\s+$/;
+                    const completedPattern = /(\w+)(\s+-\s+)(\w+)\s+$/;
                     const match = completedPattern.exec(title);
                     if (match) {
                       const dashPos = title.lastIndexOf('-');
-                      const replacedTitle = title
-                        .split('')
-                        .map((c, i) => (i === dashPos ? '–' : c))
-                        .join('');
-                      return field.onChange(replacedTitle);
+                      const editedTitle =
+                        title.substring(0, dashPos) +
+                        '–' +
+                        title.substring(dashPos + 1);
+                      return field.onChange(editedTitle);
                     }
                     field.onChange(title);
                   }}
