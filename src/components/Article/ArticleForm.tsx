@@ -58,7 +58,25 @@ export default function ArticleForm({
             <FormItem className="w-full">
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} className="px-4" autoFocus />
+                <Input
+                  {...field}
+                  onChange={({ target }) => {
+                    const title = target.value;
+                    const completedPattern = /(\S+)(\s+-\s+)(\S+)\s+$/;
+                    const match = completedPattern.exec(title);
+                    if (match) {
+                      const dashPos = title.lastIndexOf('-');
+                      const replacedTitle = title
+                        .split('')
+                        .map((c, i) => (i === dashPos ? '–' : c))
+                        .join('');
+                      return field.onChange(replacedTitle);
+                    }
+                    field.onChange(title);
+                  }}
+                  className="px-4"
+                  autoFocus
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
