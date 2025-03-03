@@ -62,7 +62,8 @@ export default function ArticleForm({
                   {...field}
                   onChange={({ target }) => {
                     const title = target.value;
-                    const completedPattern = /(\w+)(\s+-\s+)(\w+)\s+$/;
+                    const completedPattern =
+                      /([\w\u0400-\u04FF]+)(\s+-\s+)([\w\u0400-\u04FF]+)\s+$/;
                     const match = completedPattern.exec(title);
                     if (match) {
                       const dashPos = title.lastIndexOf('-');
