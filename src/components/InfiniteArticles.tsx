@@ -70,7 +70,7 @@ export default function InfiniteArticles() {
           )}
           onClick={() => setOpenMobile(false)}
         >
-          {article?.title.split(' ')[0]}
+          {article?.title.split(' –')[0]}
         </Link>
       );
     }
