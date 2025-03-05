@@ -150,7 +150,7 @@ const AutoEnDash = Extension.create({
           // This regex looks for: a word (\S+) followed by space, hyphen, space (\s+-\s+),
           // followed by another word (\S+), with a space at the end (\s+$)
           const completedPattern =
-            /([\w\u0400-\u04FF]+)(\s+-\s+)([\w\u0400-\u04FF]+)\s+$/;
+            /([\w\u0400-\u04FF]+)(\s+-\s+)([\w\u0400-\u04FF]+)[\s\p{P}]+$/u;
           const match = completedPattern.exec(textBefore);
 
           if (!match) {
