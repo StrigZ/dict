@@ -42,8 +42,24 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
   });
   if (!editor) return null;
 
+  const handleAddLink = () => {
+    if (inputRef.current) {
+      const url = getUrlFromString(inputRef.current.value);
+      if (url) {
+        editor.chain().focus().setLink({ href: url }).run();
+      }
+    }
+  };
+
+  const handleRemoveLink = () => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+    editor.chain().focus().unsetLink().run();
+  };
+
   return (
-    <Popover modal={true} open={open} onOpenChange={onOpenChange}>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -60,47 +76,28 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
           </p>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-60 p-0" sideOffset={10}>
-        <form
-          onSubmit={(e) => {
-            const target = e.currentTarget as HTMLFormElement;
-            e.preventDefault();
-            const input = target[0] as HTMLInputElement;
-            const url = getUrlFromString(input.value);
-            if (url) {
-              editor.chain().focus().setLink({ href: url }).run();
-            }
-          }}
-          className="flex p-1"
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Paste a link"
-            className="flex-1 bg-background p-1 text-sm outline-none"
-            defaultValue={(editor.getAttributes('link').href as string) || ''}
-          />
-          {editor.getAttributes('link').href ? (
-            <Button
-              size="icon"
-              variant="outline"
-              type="button"
-              className="flex h-8 items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
-              onClick={() => {
-                if (inputRef.current) {
-                  inputRef.current.value = '';
-                }
-                editor.chain().focus().unsetLink().run();
-              }}
-            >
-              <Trash className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button size="icon" className="h-8">
-              <Check className="h-4 w-4" />
-            </Button>
-          )}
-        </form>
+      <PopoverContent align="start" className="flex w-60 p-1" sideOffset={10}>
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Paste a link"
+          className="flex-1 bg-background p-1 text-sm outline-none"
+          defaultValue={(editor.getAttributes('link').href as string) || ''}
+        />
+        {editor.getAttributes('link').href ? (
+          <Button
+            size="icon"
+            variant="outline"
+            className="flex h-8 items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
+            onClick={handleRemoveLink}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button size="icon" className="h-8" onClick={handleAddLink}>
+            <Check className="h-4 w-4" />
+          </Button>
+        )}
       </PopoverContent>
     </Popover>
   );

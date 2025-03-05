@@ -31,8 +31,8 @@ type Props = {
   initialContent?: Article['content'];
   onContentChange: (value: Article['content']) => void;
   className?: string;
-  onKeyDown?: () => void; //
-  onSave?: () => void; //
+  onKeyDown?: () => void;
+  onSave?: () => void;
 };
 export default function Editor({
   initialContent,
