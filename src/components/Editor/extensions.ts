@@ -29,12 +29,12 @@ const tiptapLink = TiptapLink.configure({
 
 const taskList = TaskList.configure({
   HTMLAttributes: {
-    class: cx('not-prose pl-2'),
+    class: cx('flex flex-col gap-y-2 space-y-2'),
   },
 });
 const taskItem = TaskItem.configure({
   HTMLAttributes: {
-    class: cx('flex items-start my-4'),
+    class: cx('flex items-start my-4 not-prose'),
   },
   nested: true,
 });
