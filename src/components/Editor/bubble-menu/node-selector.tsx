@@ -26,6 +26,12 @@ export type SelectorItem = {
 
 const items: SelectorItem[] = [
   {
+    name: 'Bullet List',
+    icon: ListOrdered,
+    command: (editor) => editor?.chain().focus().toggleBulletList().run(),
+    isActive: (editor) => (editor ? editor.isActive('bulletList') : false),
+  },
+  {
     name: 'Text',
     icon: TextIcon,
     command: (editor) =>
@@ -67,12 +73,6 @@ const items: SelectorItem[] = [
     icon: CheckSquare,
     command: (editor) => editor?.chain().focus().toggleTaskList().run(),
     isActive: (editor) => (editor ? editor.isActive('taskItem') : false),
-  },
-  {
-    name: 'Bullet List',
-    icon: ListOrdered,
-    command: (editor) => editor?.chain().focus().toggleBulletList().run(),
-    isActive: (editor) => (editor ? editor.isActive('bulletList') : false),
   },
   {
     name: 'Numbered List',
