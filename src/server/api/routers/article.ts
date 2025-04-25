@@ -1,3 +1,4 @@
+import { type Article, Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
@@ -49,24 +50,60 @@ export const articleRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      const prepareSearchTerm = (term: string): string => {
+        return term
+          .replace(/[!@#$%^&*()+=<>?\/\\|{}\[\]]/g, ' ')
+          .trim()
+          .split(/\s+/)
+          .filter((word) => word.length > 2)
+          .map((word) => `${word}:*`)
+          .join(' & ');
+      };
       const limit = input.limit ?? 50;
       const { cursor } = input;
-      const items = await ctx.db.article.findMany({
-        where: {
-          title: { contains: input.contains, mode: 'insensitive' },
-          createdById: ctx.session.user.id,
-        },
-        select: {
-          id: true,
-          title: true,
-        },
-        take: limit + 1, // get an extra item at the end which we'll use as next cursor
-        cursor: cursor ? { id: cursor } : undefined,
-        orderBy: {
-          title: 'asc',
-        },
-      });
+      const items = (await (input.contains
+        ? ctx.db.$queryRaw`
+            SELECT 
+              id, 
+              title
+              -- Uncomment if you need content: content
+            FROM "Article"
+            WHERE 
+              (
+                to_tsvector('english', content::text) @@ to_tsquery('english', ${prepareSearchTerm(input.contains)})
+                OR
+                to_tsvector('russian', content::text) @@ to_tsquery('russian', ${prepareSearchTerm(input.contains)})
+                OR
+                title ILIKE ${`%${input.contains}%`}
+              )
+              AND "createdById" = ${ctx.session.user.id}
+            ORDER BY
+              GREATEST(
+                ts_rank_cd(to_tsvector('english', content::text), to_tsquery('english', ${prepareSearchTerm(input.contains)})),
+                ts_rank_cd(to_tsvector('russian', content::text), to_tsquery('russian', ${prepareSearchTerm(input.contains)}))
+              ) DESC,
+              title ASC
+            LIMIT ${limit + 1}
+            ${cursor ? Prisma.sql`OFFSET ${cursor}` : Prisma.empty}
+          `
+        : ctx.db.article.findMany({
+            where: {
+              createdById: ctx.session.user.id,
+            },
+            select: {
+              id: true,
+              title: true,
+            },
+            take: limit + 1,
+            skip: cursor ? 1 : undefined,
+            cursor: cursor ? { id: cursor } : undefined,
+            orderBy: {
+              title: 'asc',
+            },
+          }))) as Article[];
+
       let nextCursor: typeof cursor | undefined = undefined;
+
       if (items.length > limit) {
         const nextItem = items.pop();
         nextCursor = nextItem!.id;
