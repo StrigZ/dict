@@ -5,6 +5,9 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 
 export const articleRouter = createTRPCRouter({
+  getArticlesTotalAmount: protectedProcedure.query(async ({ ctx }) =>
+    ctx.db.article.count({ where: { createdById: ctx.session.user.id } }),
+  ),
   getInfiniteArticlesByLetter: protectedProcedure
     .input(
       z.object({

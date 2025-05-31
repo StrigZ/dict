@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '~/server/auth';
 import { api } from '~/trpc/server';
 
+import ArticlesTotalAmountCounter from './ArticlesTotalAmountCounter';
 import Header from './Header/Header';
 import { NewArticleButton } from './NewArticleButton';
 import PlaygroundButton from './PlaygroundButton';
@@ -20,6 +21,7 @@ export default async function Layout({ children }: Props) {
     limit: 20,
   });
   void api.article.getStartingLetters.prefetch();
+  void api.article.getArticlesTotalAmount.prefetch();
 
   if (!session?.user) {
     redirect('/api/auth/signin');
@@ -40,6 +42,7 @@ export default async function Layout({ children }: Props) {
           <div className="absolute bottom-8 right-8 flex items-center gap-2">
             <PlaygroundButton />
             <NewArticleButton />
+            <ArticlesTotalAmountCounter />
           </div>
         </div>
         <Toaster />
