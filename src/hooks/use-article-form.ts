@@ -54,6 +54,7 @@ export default function useArticleForm({
       await utils.article.getInfiniteArticlesByLetter.invalidate({
         startsWith: newArticleTitle[0]?.toUpperCase(),
       });
+      await utils.article.getArticlesTotalAmount.invalidate();
       onComplete?.();
       router.push('/articles/' + id);
     },
