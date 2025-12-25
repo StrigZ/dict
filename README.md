@@ -1,15 +1,3 @@
-# Dict
+[LIVE](https://dict-huu7.vercel.app/articles/373)
 
-TODO:
-
-- [x] Create Article component
-- [x] Create article route
-- [x] Implement text editor
-- [x] Implement article deletion
-- [x] Implement article editing
-- [x] Implement search
-
-Low priority:
-
-- [ ] Make UI responsive
-- [x] Fix breadcrumbs
+Built with TypeScript, TailwindCSS, NextJS, tRPC and Supabase
